@@ -1,0 +1,28 @@
+.CellSubGameCol {
+    display: flex;
+    flex-direction: column;
+}
+
+.CellSubGameRow {
+    display: flex;
+    flex-direction: row;
+}
+
+.CellSubGame {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-style: solid;
+    width: 30px;
+    height: 30px;
+    margin: 3px;
+    transition: 1s;
+}
+
+.CellSubGame:hover {
+    background-color: bisque;
+}
+
+.hFJ9Ve {
+    transition: stroke-dashoffset 0.225s cubic-bezier(0.4,0,0.2,1);
+}
