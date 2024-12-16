@@ -1,28 +1,45 @@
+.SubGame {
+    display: flex;
+    width: 170px;
+    height: 170px;
+    padding: 10px;
+}
+
+
 .CellSubGameCol {
     display: flex;
     flex-direction: column;
 }
 
+
 .CellSubGameRow {
     display: flex;
     flex-direction: row;
 }
+.CellSubGameRow.middle {
+    border-top: 1px solid rgba(0, 0, 0, 0.25);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+}
+
 
 .CellSubGame {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-style: solid;
-    width: 30px;
-    height: 30px;
-    margin: 3px;
+    position: relative;
+    width: 55px;
+    height: 55px;
     transition: 1s;
 }
-
-.CellSubGame:hover {
-    background-color: bisque;
+.CellSubGame > div {
+    position: absolute;
+    top: 0; 
+    left: 0;
+    width: 55px; 
+    height: 55px;
 }
 
-.hFJ9Ve {
-    transition: stroke-dashoffset 0.225s cubic-bezier(0.4,0,0.2,1);
+.CellSubGame.center {
+    border-left: 1px solid rgba(0, 0, 0, 0.25);
+    border-right: 1px solid rgba(0, 0, 0, 0.25);
+}
+.CellSubGame.hover:hover {
+    background-color: bisque;
 }

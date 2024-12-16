@@ -17,16 +17,16 @@ const ODrawer = ({ visible }) => {
                 <path d="m14034 10297c-48.7-680.5-303.4-1247.5-573.3-1809.7 186.3 588.2 372.7 1176.4 573.3 1809.7"/>
             </clipPath>
 
-            <g transform="rotate(15 11000 11000)">
+            <g transform="rotate(15 11000 11000)" opacity={visible === null ? 0 : 1}>
                 <ellipse className={visible ? "OBrushPath OBrushVisible" : "OBrushPath OBrushHidden"} transform="rotate(73 11000 11000)" rx="4500" ry="5000" cx="11000" cy="11000" clipPath="url(#OBrushClipLeft)"/>
             </g>
-            <g transform="rotate(45 10300 10000)">
+            <g transform="rotate(45 10300 10000)" opacity={visible === null ? 0 : 1}>
                 <ellipse className={visible ? "OBrushPath OBrushVisible" : "OBrushPath OBrushHidden"} transform="rotate(73 11000 11000)" rx="4500" ry="5000" cx="11000" cy="11000" clipPath="url(#OBrushClipRight)"/>
             </g>
         </g>
         </g>
-    </svg>    
-    </>
+    </svg>
+    </>; 
 }
 
 export default ODrawer;
