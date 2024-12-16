@@ -1,7 +1,8 @@
 import './SubGame.css';
+import { useState } from 'react';
 import useStateContext from "./StateContext";
 import ODrawer from "../components/ODrawer";
-import { useState } from 'react';
+import XDrawer from "../components/XDrawer";
 
 const SubGame = ({ gameID }) => {
     const { getSubGame } = useStateContext();
@@ -20,7 +21,7 @@ const SubGame = ({ gameID }) => {
                     <ODrawer visible={visible}/>
                 </div>
                 <div className="CellSubGame">
-                    {getCellSubGame(subGame[1])}
+                    <XDrawer visible={visible}/>
                 </div>
                 <div className="CellSubGame">
                     {getCellSubGame(subGame[2])}

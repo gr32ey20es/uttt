@@ -3,6 +3,7 @@
     stroke: rgb(250,0,0); 
     stroke-width: 3800px;
     stroke-dasharray: 30000;
+    stroke-dashoffset: 30000;
 }
 
 @keyframes OBrushVisibleAnimation {
@@ -15,6 +16,6 @@
     to { stroke-dashoffset: 30000; }
 }
 
-.OBrushVisible { animation: OBrushVisibleAnimation 0.4s linear forwards; }
-.OBrushHidden { animation: OBrushHiddenAnimation 0.4s linear forwards; }
+.OBrushVisible { animation: OBrushVisibleAnimation 0.5s linear forwards; }
+.OBrushHidden { animation: OBrushHiddenAnimation 0.5s linear forwards; }
 
