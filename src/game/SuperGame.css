@@ -26,7 +26,46 @@
     align-items: center;
     justify-content: center;
 }
-.CellSuperGame.center {
+.CellSuperGameCenter {
     border-left: 3px solid #000000;
     border-right: 3px solid #000000;
+}
+
+.BottomBar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.PlayerTurn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: #eee;
+    padding: 0px 25px;
+    border-radius: 3px;
+    letter-spacing: 0.03rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.PlayerTurn > div {
+    margin: 3px;
+}
+.PlayerTurn > div:last-child {
+    width: 20px;
+    margin-right: -5px;
+    text-align: center;
+}
+
+.XWin {
+    background-image: url('../assets/XBrush.svg');
+    background-color: #cccccc;
+    color: #cccccc;
+}
+
+.OWin {
+    background-image: url('../assets/OBrush.svg');
+    background-color: #cccccc;
 }

@@ -7,7 +7,7 @@ const CellSubGame = ({ gameID, index }) => {
     const { isUndo, isPrevMove, gameTurn, subGames, updateGame, undo } = useStateContext();
     let value = subGames[gameID][index];
 
-    let clickable = (gameTurn === null || gameTurn === gameID) && value === null;
+    let clickable = isUndo !== true && (gameTurn === null || gameTurn === gameID) && value === null;
     let alternate = isUndo && isPrevMove(gameID, index);
 
     useEffect(() => { // Animation time

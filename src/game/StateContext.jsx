@@ -1,8 +1,8 @@
 import { useState, createContext, useContext } from "react";
 import { 
     createNewPlayerTurn, createNewGameTurn,
-    createNewGame, createNewSubGames, 
-    createNewPrevMoves, 
+    createNewGame, createNewSubGames,
+    createNewPrevMoves, checkIfWin
 } from "./helpers";
 
 const StateContext = createContext();
@@ -12,16 +12,24 @@ const StateProvider = ({children}) => {
     const [gameTurn, setGameTurn] = useState( createNewGameTurn() );
     const [superGame, setSuperGame] = useState( createNewGame() );
     const [subGames, setSubGames] = useState( createNewSubGames() );
-    const [isUndo, setIsUndo] = useState(false);
-    const [prevMoves, setPrevMoves] = useState(createNewPrevMoves());
+    const [isUndo, setIsUndo] = useState(null);
+    const [prevMoves, setPrevMoves] = useState( createNewPrevMoves() );
 
     const updateGame = (gameID, index) => {
+        let newSuperGame = [...superGame];
         let newSubGames = [...subGames];
-        let newPrevMoves = [...prevMoves, [gameID, index]]
-        newSubGames[gameID][index] = playerTurn;
-        
+        let newPrevMoves = [...prevMoves, [gameID, index, gameTurn]]    // prevMove's structure
+
+        newSubGames[gameID][index] = playerTurn;        
+
+        let winner = checkIfWin(newSubGames[gameID]);
+        if(winner) {
+            newSuperGame[gameID] = winner;
+            setSuperGame(newSuperGame);
+        }
+
         setPlayerTurn(playerTurn === "X" ? 'O' : 'X');
-        setGameTurn((gameTurn + 1) % 9);
+        setGameTurn(newSuperGame[index] === null ? index : null);
         setSubGames(newSubGames);
         setIsUndo(false);
         setPrevMoves(newPrevMoves);
@@ -36,17 +44,22 @@ const StateProvider = ({children}) => {
         let newSubGames = [...subGames];
         let newPrevMoves = [...prevMoves]
         let prevMove = newPrevMoves.pop();
+
         newSubGames[prevMove[0]][prevMove[1]] = null;
 
         setPlayerTurn(playerTurn === "X" ? 'O' : 'X');
-        setGameTurn((gameTurn + 8) % 9);
+        setGameTurn(prevMove[2]);
         setSubGames(newSubGames);
         setIsUndo(newPrevMoves.length ? false : null);
         setPrevMoves(newPrevMoves);
     }
 
     return <>
-        <StateContext.Provider value={{ isUndo, setIsUndo, isPrevMove, gameTurn, superGame, subGames, updateGame, undo}}>
+        <StateContext.Provider value={{ 
+            playerTurn, setPlayerTurn, gameTurn, setGameTurn, superGame, setSuperGame,
+            subGames, setSubGames, isUndo, setIsUndo, prevMoves, setPrevMoves,
+            updateGame, isPrevMove, undo
+        }}>
             {children}
         </StateContext.Provider>
     </>;
