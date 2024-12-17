@@ -4,21 +4,19 @@ import XODrawer from '../components/XODrawer';
 import { useEffect } from 'react';
 
 const CellSubGame = ({ gameID, index }) => {
-    const { isUndo, isPrevMove, gameTurn, subGames, updateGame, undo } = useStateContext();
-    let value = subGames[gameID][index];
+    const { state, isAlternate, moveUpdate, isClickable, undoUpdate } = useStateContext();
+    let clickable = isClickable(gameID, index);
+    let alternate = isAlternate(gameID, index);
 
-    let clickable = isUndo !== true && (gameTurn === null || gameTurn === gameID) && value === null;
-    let alternate = isUndo && isPrevMove(gameID, index);
-
-    useEffect(() => { // Animation time
-        if(alternate) setTimeout(() => undo(), 700); 
-    }, [alternate, undo]);
+    useEffect(() => {
+        if(alternate) setTimeout(() => undoUpdate(), 700); 
+    }, [state]);
 
     return <>
     <div className={clickable ? "CellSubGame hover" : "CellSubGame"} 
-        onClick={clickable ? () => updateGame(gameID, index) : () => {}}
+        onClick={clickable ? () => moveUpdate(gameID, index) : () => {}}
     > 
-        <XODrawer width={55} height={55} value={value} alternate={alternate}/>
+        <XODrawer width={55} height={55} value={state.miniGames[gameID][index]} alternate={alternate}/>
     </div>
     </>
 }

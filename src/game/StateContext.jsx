@@ -1,71 +1,76 @@
 import { useState, createContext, useContext } from "react";
-import { 
-    createNewPlayerTurn, createNewGameTurn,
-    createNewGame, createNewSubGames,
-    createNewPrevMoves, checkIfWin
-} from "./helpers";
+import { whoIsWinner } from "./helpers";
 
 const StateContext = createContext();
+const useStateContext = () => useContext(StateContext);
 
 const StateProvider = ({children}) => {
-    const [playerTurn, setPlayerTurn] = useState( createNewPlayerTurn() );
-    const [gameTurn, setGameTurn] = useState( createNewGameTurn() );
-    const [superGame, setSuperGame] = useState( createNewGame() );
-    const [subGames, setSubGames] = useState( createNewSubGames() );
-    const [isUndo, setIsUndo] = useState(null);
-    const [prevMoves, setPrevMoves] = useState( createNewPrevMoves() );
+    const [state, setState] = useState
+    ({
+        _mutex: false,   // For animation
+        winner: null,
+        playerTurn: 'X',
+        gameIDTurn: null,
+        superGame : new Array(9).fill(null),
+        miniGames : Array(9).fill().map(() => Array(9).fill(null)),
+        prevMoves : [],
+        hasUndone : null,
+    })
 
-    const updateGame = (gameID, index) => {
-        let newSuperGame = [...superGame];
-        let newSubGames = [...subGames];
-        let newPrevMoves = [...prevMoves, [gameID, index, gameTurn]]    // prevMove's structure
-
-        newSubGames[gameID][index] = playerTurn;        
-
-        let winner = checkIfWin(newSubGames[gameID]);
-        if(winner) {
-            newSuperGame[gameID] = winner;
-            setSuperGame(newSuperGame);
-        }
-
-        setPlayerTurn(playerTurn === "X" ? 'O' : 'X');
-        setGameTurn(newSuperGame[index] === null ? index : null);
-        setSubGames(newSubGames);
-        setIsUndo(false);
-        setPrevMoves(newPrevMoves);
+    const setHasUndone = () => setState({...state, _mutex: true, hasUndone: true})
+    
+    const isClickable = (gameID, index) => {
+        return state.hasUndone !== true 
+        && (state.gameIDTurn === null || state.gameIDTurn === gameID) 
+        && state.superGame[gameID] === null
+        && state.miniGames[gameID][index] === null;
     }
 
-    const isPrevMove = (gameID, index) => {
-        let prevMove = prevMoves[prevMoves.length - 1];
-        return prevMove[0] === gameID && prevMove[1] === index;
+    const isAlternate = (gameID, index) => {
+        let prevMove = state.prevMoves[state.prevMoves.length - 1];
+
+        return state.hasUndone
+        && (prevMove[0] === gameID && prevMove[1] === index);
+    }
+    
+    const moveUpdate = (gameID, index) => {
+        let newState = {...state};
+
+        newState.prevMoves  = [...newState.prevMoves, [gameID, index, newState.gameIDTurn]];
+        newState.miniGames[gameID][index] = newState.playerTurn;
+        newState.superGame[gameID] = whoIsWinner(newState.miniGames[gameID]);
+        newState.gameIDTurn = (newState.superGame[index] === null ? index : null);
+        newState.playerTurn = (newState.playerTurn === 'X' ? 'O' : 'X');
+        newState.winner = whoIsWinner(newState.superGame);
+        newState.hasUndone = false;
+
+        console.log(newState);
+
+        setState(newState);
     }
 
-    const undo = () => {
-        let newSubGames = [...subGames];
-        let newPrevMoves = [...prevMoves]
-        let prevMove = newPrevMoves.pop();
+    const undoUpdate = () => {
+        let newState = {...state};
 
-        newSubGames[prevMove[0]][prevMove[1]] = null;
+        newState._mutex = false;
+        let prevMove = newState.prevMoves.pop();
+        newState.miniGames[prevMove[0]][prevMove[1]] = null;
+        newState.superGame[prevMove[0]] = whoIsWinner(newState.miniGames[prevMove[0]]);
+        newState.gameIDTurn = prevMove[2];
+        newState.playerTurn = (newState.playerTurn === 'X' ? 'O' : 'X');
+        newState.winner = whoIsWinner(newState.superGame);
+        newState.hasUndone = newState.prevMoves.length ? false : null;
 
-        setPlayerTurn(playerTurn === "X" ? 'O' : 'X');
-        setGameTurn(prevMove[2]);
-        setSubGames(newSubGames);
-        setIsUndo(newPrevMoves.length ? false : null);
-        setPrevMoves(newPrevMoves);
+        setState(newState);
     }
 
-    return <>
-        <StateContext.Provider value={{ 
-            playerTurn, setPlayerTurn, gameTurn, setGameTurn, superGame, setSuperGame,
-            subGames, setSubGames, isUndo, setIsUndo, prevMoves, setPrevMoves,
-            updateGame, isPrevMove, undo
-        }}>
-            {children}
-        </StateContext.Provider>
-    </>;
+    return <StateContext.Provider 
+    value = {{  
+        state, setHasUndone, isAlternate, isClickable, 
+        moveUpdate, undoUpdate 
+    }}
+    > {children} </StateContext.Provider>;
 };
-
-const useStateContext = () => useContext(StateContext);
 
 export default useStateContext;
 export { StateProvider };
