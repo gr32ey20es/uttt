@@ -1,15 +1,11 @@
 const createNewPlayerTurn = () => 'X';
-const createNewGameTurn = () => 0;
-const createNewGame = () => new Array(9);
+const createNewGameTurn = () => null;   // null, 1-9
+const createNewGame = () => new Array(9).fill(null);
 const createNewSubGames = () => Array.from({length: 9}, (_) => createNewGame())
-
-const updatePlayerTurn = (turn) => isXTurn(turn) ? 'O' : 'X';
-
-const isXTurn = (turn) => turn === "X";
+const createNewPrevMoves = () => [];
 
 export { 
     createNewPlayerTurn, createNewGameTurn,
-    createNewGame, createNewSubGames, 
-    updatePlayerTurn,
-    isXTurn
+    createNewGame, createNewSubGames,
+    createNewPrevMoves
 };

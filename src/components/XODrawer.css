@@ -1,0 +1,7 @@
+.XODrawer { position: relative; }
+
+.XODrawer > div {
+    position: absolute;
+    top: 0; 
+    left: 0;
+}
