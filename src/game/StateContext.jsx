@@ -5,20 +5,18 @@ const StateContext = createContext();
 const useStateContext = () => useContext(StateContext);
 
 const StateProvider = ({children}) => {
-    const newGame = () => {
-        return {
-            winner: null,
-            playerTurn: 'X',
-            gameIDTurn: null,
-            superGame : new Array(9).fill(null),
-            miniGames : Array(9).fill().map(() => Array(9).fill(null)),
-            prevMoves : [],
-            hasUndone : null,
-    }}
-    
     const [mutex, setMutex] = useState(false) // For Animation
-    const [state, setState] = useState(newGame())
+    const [state, setState] = useState(null)
 
+    const newGame = () => setState({
+        winner: null,
+        playerTurn: 'X',
+        gameIDTurn: null,
+        superGame : new Array(9).fill(null),
+        miniGames : Array(9).fill().map(() => Array(9).fill(null)),
+        prevMoves : [],
+        hasUndone : null,
+    })
 
     const setHasUndone = () => setState({...state, hasUndone: true})
     
@@ -51,7 +49,7 @@ const StateProvider = ({children}) => {
         newState.superGame[gameID] = whoIsWinner(newState.miniGames[gameID]);
         newState.gameIDTurn = (newState.superGame[index] === null ? index : null);
         newState.playerTurn = (newState.playerTurn === 'X' ? 'O' : 'X');
-        newState.winner = whoIsWinner(newState.superGame);
+        newState.winner = whoIsWinner(newState.superGame)
         newState.hasUndone = false;
 
         setState(newState);
@@ -65,15 +63,14 @@ const StateProvider = ({children}) => {
         newState.superGame[prevMove[0]] = whoIsWinner(newState.miniGames[prevMove[0]]);
         newState.gameIDTurn = prevMove[2];
         newState.playerTurn = (newState.playerTurn === 'X' ? 'O' : 'X');
-        newState.winner = whoIsWinner(newState.superGame);
         newState.hasUndone = newState.prevMoves.length ? false : null;
 
         setState(newState);
     }
 
     return <StateContext.Provider 
-    value = {{  
-        mutex, setMutex, state, setHasUndone, 
+    value = {{ newGame,
+        mutex, setMutex, state, setState, setHasUndone, 
         isAlternateCellMG, isAlternateMG, isClickable, 
         moveUpdate, undoUpdate 
     }}

@@ -14,4 +14,5 @@
     Free EPS: https://www.vecteezy.com
     Convert EPS to SVG: https://cloudconvert.com
     Convert SVG to React Component: https://www.svgminify.com
+    Generate SVG from Text: https://maketext.io
     

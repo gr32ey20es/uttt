@@ -8,8 +8,8 @@ const SuperGame = () => {
     const { mutex, state, setHasUndone } = useStateContext();
     useEffect(()=>{}, [state, mutex]); 
 
-    return <>
-    <div className="SuperGame BackgroundImg">
+    return state === null ? <></> :
+    <div className="SuperGame">
         <div className="CellSuperGameCol">
             <div className='TopBar'>
                 <div>
@@ -38,8 +38,7 @@ const SuperGame = () => {
                 <SubGame gameID={8}/>
             </div>
         </div>
-    </div>
-    </>       
+    </div>;
 }
 
 export default SuperGame;

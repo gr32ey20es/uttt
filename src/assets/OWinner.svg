@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="81.8px" height="120.8px" preserveAspectRatio="xMidYMid" viewBox="209.1 14.6 81.8 120.8" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<filter id="a">
+<feFlood flood-color="#f00" flood-opacity=".7" result="c1"/>
+<feFlood flood-color="#0000ff" flood-opacity=".7" result="c3"/>
+<feComposite in="c1" in2="SourceAlpha" operator="in" result="text-c1"/>
+<feComposite in="c3" in2="SourceAlpha" operator="in" result="text-c3"/>
+<feOffset dx="5" dy="-1" in="text-c1" result="text1"/>
+<feOffset dx="-5" dy="1" in="text-c3" result="text3"/>
+<feBlend in="SourceGraphic" in2="text1" mode="multiply" result="text4"/>
+<feBlend in="text4" in2="text3" mode="multiply"/>
+</filter>
+</defs>
+<g filter="url(#a)">
+<g transform="translate(227.28 97.43)">
+<path d="m2.05-15.62q0-12.09 6.27-19.71 6.66-8.25 18.24-8.25 8.38 0 12.61 4.06 4.22 4.06 4.22 12.64 0 13.06-6.65 20.67-6.6 7.49-17.67 7.49-8.64 0-12.83-4.32t-4.19-12.58zm16.83-13.24q-2.88 11.52-2.88 20.6 0 2.18 0.74 3.59 0.73 1.41 2.68 1.41 1.96 0 3.17-0.93 1.22-0.93 2.18-3.04 1.53-3.46 2.97-10.79 1.44-7.32 1.57-10.36t0.13-5.35q0-2.3-0.7-3.77-0.71-1.48-2.6-1.48-1.88 0-3.16 1.16-2.37 2.17-4.1 8.96z" fill="#444"/>
+</g>
+</g>
+<style>text {
+  font-size: 64px;
+  font-family: Arial Black;
+  dominant-baseline: central;
+  text-anchor: middle;
+}</style>
+</svg>
