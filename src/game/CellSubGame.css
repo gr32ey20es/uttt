@@ -1,9 +1,0 @@
-.CellSubGame {
-    width: 55px;
-    height: 55px;
-    transition: 1s;
-}
-
-.CellSubGame.hover:hover {
-    background-color: bisque;
-}

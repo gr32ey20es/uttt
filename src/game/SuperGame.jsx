@@ -1,13 +1,13 @@
 import './SuperGame.css';
 import useStateContext from './StateContext';
-import SubGame from "./SubGame";
+import SubGame from "./MiniGame";
 import NeonButton from '../components/NeonButton';
 import { useEffect } from 'react';
 
 const SuperGame = () => {
-    const { state, setHasUndone } = useStateContext();
+    const { mutex, setMutex, state, setHasUndone } = useStateContext();
 
-    useEffect(()=>{}, [state]); 
+    useEffect(()=>{}, [state, mutex]); 
 
     const getCellSuperGame = (gameID) => {
         let className = 
@@ -43,7 +43,7 @@ const SuperGame = () => {
 
             <div className='BottomBar'>
                 <NeonButton color={state.playerTurn === 'X' ? '#e91e63' : '#2196f3'} 
-                    onClick={!state._mutex ? () => setHasUndone(true) : () => {}}  disabled={!(state.hasUndone !== null)} text="Undo"/>
+                    onClick={!mutex ? () => setHasUndone(true) : () => {}}  disabled={!(state.hasUndone !== null)} text="Undo"/>
                 <div className='PlayerTurn'>
                     <div>Player Turn:</div>
                     <div>{state.playerTurn}</div>

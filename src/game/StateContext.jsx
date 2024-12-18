@@ -5,9 +5,9 @@ const StateContext = createContext();
 const useStateContext = () => useContext(StateContext);
 
 const StateProvider = ({children}) => {
+    const [mutex, setMutex] = useState(false) // For Animation
     const [state, setState] = useState
     ({
-        _mutex: false,   // For animation
         winner: null,
         playerTurn: 'X',
         gameIDTurn: null,
@@ -17,10 +17,11 @@ const StateProvider = ({children}) => {
         hasUndone : null,
     })
 
-    const setHasUndone = () => setState({...state, _mutex: true, hasUndone: true})
+    const setHasUndone = () => setState({...state, hasUndone: true})
     
     const isClickable = (gameID, index) => {
-        return state.hasUndone !== true 
+        return !mutex
+        && state.hasUndone !== true 
         && (state.gameIDTurn === null || state.gameIDTurn === gameID) 
         && state.superGame[gameID] === null
         && state.miniGames[gameID][index] === null;
@@ -44,15 +45,12 @@ const StateProvider = ({children}) => {
         newState.winner = whoIsWinner(newState.superGame);
         newState.hasUndone = false;
 
-        console.log(newState);
-
         setState(newState);
     }
 
     const undoUpdate = () => {
         let newState = {...state};
 
-        newState._mutex = false;
         let prevMove = newState.prevMoves.pop();
         newState.miniGames[prevMove[0]][prevMove[1]] = null;
         newState.superGame[prevMove[0]] = whoIsWinner(newState.miniGames[prevMove[0]]);
@@ -66,7 +64,7 @@ const StateProvider = ({children}) => {
 
     return <StateContext.Provider 
     value = {{  
-        state, setHasUndone, isAlternate, isClickable, 
+        mutex, setMutex, state, setHasUndone, isAlternate, isClickable, 
         moveUpdate, undoUpdate 
     }}
     > {children} </StateContext.Provider>;

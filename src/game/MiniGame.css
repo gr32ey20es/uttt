@@ -1,4 +1,4 @@
-.SubGame {
+.MiniGame {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -6,23 +6,23 @@
 }
 
 
-.CellSubGameCol {
+.CellMiniGameCol {
     display: flex;
     flex-direction: column;
 }
 
 
-.CellSubGameRow {
+.CellMiniGameRow {
     display: flex;
     flex-direction: row;
 }
-.CellSubGameRow.middle {
+.CellMiniGameRow.middle {
     border-top: 1px solid rgba(0, 0, 0, 0.25);
     border-bottom: 1px solid rgba(0, 0, 0, 0.25);
 }
 
 
-.CellSubGameCenter {
+.CellMiniGameCenter {
     border-left: 1px solid rgba(0, 0, 0, 0.25);
     border-right: 1px solid rgba(0, 0, 0, 0.25);
 }
