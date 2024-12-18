@@ -2,10 +2,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px;
 }
-
-
 .CellMiniGameCol {
     display: flex;
     flex-direction: column;
@@ -17,12 +14,17 @@
     flex-direction: row;
 }
 .CellMiniGameRow.middle {
-    border-top: 1px solid rgba(0, 0, 0, 0.25);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+    border-top: 1px solid rgba(0, 0, 0, 0.20);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.20);
 }
 
 
 .CellMiniGameCenter {
-    border-left: 1px solid rgba(0, 0, 0, 0.25);
-    border-right: 1px solid rgba(0, 0, 0, 0.25);
+    border-left: 1px solid rgba(0, 0, 0, 0.20);
+    border-right: 1px solid rgba(0, 0, 0, 0.20);
 }
+
+.BrushBackground > div { opacity: 0; transition: 0.45s; transition-delay: 0.45s }
+.XBrushBackground { background-image: url('../assets/XBrush.svg') }
+.OBrushBackground { background-image: url('../assets/OBrush.svg') }
+.NBrushBackground { background-image: url('../assets/NBrush.svg') }

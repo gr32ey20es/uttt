@@ -15,7 +15,7 @@ const whoIsWinner = (game) => {
 
     if(winner !== null) return winner;
     
-    winner = '=';
+    winner = 'N';
     for(let i = 0; i < 9; i++) 
         if(game[i] === null) winner = null;
 

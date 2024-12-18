@@ -1,9 +1,12 @@
 import './MiniGame.css';
+import useStateContext from "./StateContext";
 import CellMiniGame from './CellMiniGame';
 
 const MiniGame = ({ gameID }) => {
+    const { state } = useStateContext();
+
     return <>
-    <div className="MiniGame">       
+    <div className={"MiniGame " + (state.superGame[gameID] === null ? "" : ("BrushBackground " + state.superGame[gameID] + "BrushBackground"))}>
         <div className="CellMiniGameCol">
             <div className="CellMiniGameRow">
                 <CellMiniGame gameID={gameID} index={0}/>

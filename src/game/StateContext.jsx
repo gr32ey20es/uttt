@@ -5,17 +5,20 @@ const StateContext = createContext();
 const useStateContext = () => useContext(StateContext);
 
 const StateProvider = ({children}) => {
+    const newGame = () => {
+        return {
+            winner: null,
+            playerTurn: 'X',
+            gameIDTurn: null,
+            superGame : new Array(9).fill(null),
+            miniGames : Array(9).fill().map(() => Array(9).fill(null)),
+            prevMoves : [],
+            hasUndone : null,
+    }}
+    
     const [mutex, setMutex] = useState(false) // For Animation
-    const [state, setState] = useState
-    ({
-        winner: null,
-        playerTurn: 'X',
-        gameIDTurn: null,
-        superGame : new Array(9).fill(null),
-        miniGames : Array(9).fill().map(() => Array(9).fill(null)),
-        prevMoves : [],
-        hasUndone : null,
-    })
+    const [state, setState] = useState(newGame())
+
 
     const setHasUndone = () => setState({...state, hasUndone: true})
     
@@ -27,11 +30,17 @@ const StateProvider = ({children}) => {
         && state.miniGames[gameID][index] === null;
     }
 
-    const isAlternate = (gameID, index) => {
+    const isAlternateCellMG = (gameID, index) => {
         let prevMove = state.prevMoves[state.prevMoves.length - 1];
 
         return state.hasUndone
         && (prevMove[0] === gameID && prevMove[1] === index);
+    }
+    const isAlternateMG = (gameID) => {
+        if (state.superGame[gameID] === null) return null;
+
+        let prevMove = state.prevMoves[state.prevMoves.length - 1];
+        return state.hasUndone && prevMove[0] === gameID
     }
     
     const moveUpdate = (gameID, index) => {
@@ -64,7 +73,8 @@ const StateProvider = ({children}) => {
 
     return <StateContext.Provider 
     value = {{  
-        mutex, setMutex, state, setHasUndone, isAlternate, isClickable, 
+        mutex, setMutex, state, setHasUndone, 
+        isAlternateCellMG, isAlternateMG, isClickable, 
         moveUpdate, undoUpdate 
     }}
     > {children} </StateContext.Provider>;

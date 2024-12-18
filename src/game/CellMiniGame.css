@@ -1,7 +1,11 @@
-.CellMiniGame { width: 55px; height: 55px; transition: 1s }
-.CellMiniGame.hover:hover { background-color: bisque }
+.CellMiniGame { 
+    display: flex; align-items: center; justify-content: center;
+    width: 55px; height: 55px; transition: 1s;
+    background-color: var(--background-color);
+}
+.CellMiniGame.hover:hover { background-color: var(--hover-color) }
 
-.XONDrawer { position: relative; width: 55px; height: 55px }
+.XONDrawer { position: relative; width: 35px; height: 35px }
 .XONDrawer > svg { position: absolute; top: 0; left: 0 }
 
 .PathDrawer  { fill: none; stroke-width: 0.1px; stroke-dasharray: var(--stroke-dasharray) }
@@ -19,5 +23,5 @@
     to { stroke-dashoffset: 0 }
 }
 
-.PathVisible { animation: PathVisibleAnimation 0.4s linear forwards }
-.PathHidden { animation: PathHiddenAnimation 0.4s linear forwards reverse }
+.PathVisible { animation: PathVisibleAnimation 0.3s linear forwards }
+.PathHidden { animation: PathHiddenAnimation 0.3s linear forwards reverse }

@@ -3,7 +3,7 @@ import useStateContext from "./StateContext";
 import { useEffect, useState } from 'react';
 
 const CellMiniGame = ({ gameID, index }) => {
-    const { state, setMutex, isClickable, isAlternate, moveUpdate, undoUpdate} = useStateContext();
+    const { state, setMutex, isClickable, isAlternateCellMG, moveUpdate, undoUpdate} = useStateContext();
     const [ selfAni, setSelfAni ] = useState({
         type: null,
         event: null,
@@ -11,7 +11,7 @@ const CellMiniGame = ({ gameID, index }) => {
     });
 
     let clickable = isClickable(gameID, index);
-    let alternate = isAlternate(gameID, index);
+    let alternate = isAlternateCellMG(gameID, index);
 
     useEffect(() => {
         if(alternate) {
@@ -28,25 +28,29 @@ const CellMiniGame = ({ gameID, index }) => {
     }
 
     return <>
-    <div className={clickable ? "CellMiniGame hover" : "CellMiniGame"} 
+    <div 
+        className={'CellMiniGame' + (clickable ? ' hover' : '')}
         onClick={clickable ? onClick : null}
-    > 
+        style={{
+            '--hover-color': state.playerTurn === 'X' ? '#bbdefb' : '#f8bbd0',
+            '--background-color': clickable ? (state.playerTurn === 'X' ? '#e3f2fd' : '#fce4ec') : '#fff'
+        }}> 
         <div className='XONDrawer'>
             <svg viewBox='0 0 1 1' xmlns='http://www.w3.org/2000/svg'>
                 <line 
                     className={'PathDrawer ' + (selfAni.type === 'X' ? ('XPathDrawer ' + selfAni.event) : '')}  
-                    style={{'--stroke-dasharray': '1.14'}} strokeLinecap='round' x1={0.1} y1={0.1} x2={0.9} y2={0.9}/>
+                    style={{'--stroke-dasharray': '1'}} strokeLinecap='round' x1={0.2} y1={0.2} x2={0.8} y2={0.8}/>
                 <line 
                     className={'PathDrawer ' + (selfAni.type === 'X' ? ('XPathDrawer ' + selfAni.event) : '')}  
-                    onAnimationEnd={selfAni.type === 'X' ? selfAni.onAnimationEnd : null} strokeDashoffset={selfAni.event === 'PathVisible' ? 1.14 : 0}
-                    style={{animationDelay: '0.2s', '--stroke-dasharray': '1.14'}} strokeLinecap='round' x1={0.9} y1={0.1} x2={0.1} y2={0.9}/>
+                    onAnimationEnd={selfAni.type === 'X' ? selfAni.onAnimationEnd : null} strokeDashoffset={selfAni.event === 'PathVisible' ? 1 : 0}
+                    style={{animationDelay: '0.15s', '--stroke-dasharray': '1'}} strokeLinecap='round' x1={0.8} y1={0.2} x2={0.2} y2={0.8}/>
             </svg>
             
             <svg viewBox='0 0 1 1' xmlns='http://www.w3.org/2000/svg'>
                 <ellipse 
                     className={'PathDrawer ' + (selfAni.type === 'O' ? ('OPathDrawer ' + selfAni.event) : '')}  
                     onAnimationEnd={selfAni.type === 'O' ? selfAni.onAnimationEnd : null}
-                    style={{animationDuration: '0.6s', '--stroke-dasharray': '2.41'}} transform='rotate(-90 0.5 0.5)' rx={0.4} ry={0.37} cx={0.5} cy={0.5}/>
+                    style={{animationDuration: '0.35s', '--stroke-dasharray': '2.42'}} transform='rotate(-90 0.5 0.5)' rx={0.4} ry={0.37} cx={0.5} cy={0.5}/>
             </svg>
 
             <svg viewBox='0 0 1 1' xmlns='http://www.w3.org/2000/svg'>
@@ -56,7 +60,7 @@ const CellMiniGame = ({ gameID, index }) => {
                 <line 
                     className={'PathDrawer ' + (selfAni.type === 'N' ? ('NPathDrawer ' + selfAni.event) : '')}  
                     onAnimationEnd={selfAni.type === 'N' ? selfAni.onAnimationEnd : null} strokeDashoffset={selfAni.event === 'PathVisible' ? 0.8 : 0}
-                    style={{animationDelay: '0.3s', '--stroke-dasharray': '0.80'}} strokeLinecap='round' x1={0.1} y1={0.7} x2={0.9} y2={0.7}/>
+                    style={{animationDelay: '0.15s', '--stroke-dasharray': '0.80'}} strokeLinecap='round' x1={0.1} y1={0.7} x2={0.9} y2={0.7}/>
             </svg>
         </div>
     </div>
