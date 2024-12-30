@@ -44,10 +44,17 @@ const HomeScreen = () => {
                 <motion.div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
                     <motion.button 
                         className="button-82-pushable" role="button" 
-                        onClick={() => { newGame(); setOverlay(false)}}> 
+                        onClick={() => { newGame(false); setOverlay(false)}}> 
                         <motion.span className="button-82-shadow"></motion.span>
                         <motion.span className="button-82-edge"></motion.span>
-                        <motion.span className="button-82-front text"> New Game </motion.span>
+                        <motion.span className="button-82-front text"> PvP </motion.span>
+                    </motion.button>
+                    <motion.button 
+                        className="button-82-pushable" role="button" 
+                        onClick={() => { newGame(true); setOverlay(false)}}> 
+                        <motion.span className="button-82-shadow"></motion.span>
+                        <motion.span className="button-82-edge"></motion.span>
+                        <motion.span className="button-82-front text"> PvC </motion.span>
                     </motion.button>
                     <motion.img style={{width: '60%'}} src={gameIcon}/>
                 </motion.div>

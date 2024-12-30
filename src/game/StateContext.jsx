@@ -8,7 +8,7 @@ const StateProvider = ({children}) => {
     const [mutex, setMutex] = useState(false) // For Animation
     const [state, setState] = useState(null)
 
-    const newGame = () => setState({
+    const newGame = (isAI = false) => setState({
         winner: null,
         playerTurn: 'X',
         gameIDTurn: null,
@@ -16,6 +16,7 @@ const StateProvider = ({children}) => {
         miniGames : Array(9).fill().map(() => Array(9).fill(null)),
         prevMoves : [],
         hasUndone : null,
+        isAI,
     })
 
     const setHasUndone = () => setState({...state, hasUndone: true})
@@ -53,6 +54,10 @@ const StateProvider = ({children}) => {
         newState.hasUndone = false;
 
         setState(newState);
+
+        if (newState.isAI && newState.playerTurn === 'X') {
+            findBestMove(newState.gameIDTurn);
+        }
     }
 
     const undoUpdate = () => {
@@ -67,6 +72,73 @@ const StateProvider = ({children}) => {
 
         setState(newState);
     }
+
+    const minimax = (board, depth, isMaximizingPlayer, gameID) => {
+        // Ensure board is not null or undefined
+        if (!board || !Array.isArray(board)) {
+            console.error("Invalid board passed to minimax:", board);
+            return { score: 0 }; // Default to neutral score
+        }
+    
+        const winner = whoIsWinner(board);
+        if (winner === 'X') return { score: 10 - depth };
+        if (winner === 'O') return { score: depth - 10 };
+        if (!board.some(row => row && row.includes(null))) return { score: 0 }; // Tie
+    
+        let bestMove;
+        if (isMaximizingPlayer) {
+            let bestScore = -Infinity;
+            board.forEach((row, i) => {
+                row.forEach((cell, j) => {
+                    if (cell === null) {
+                        board[i][j] = 'X'; // Simulate AI move
+                        const { score } = minimax(board, depth + 1, false, gameID);
+                        board[i][j] = null; // Undo move
+                        if (score > bestScore) {
+                            bestScore = score;
+                            bestMove = { i, j };
+                        }
+                    }
+                });
+            });
+            return { score: bestScore, move: bestMove };
+        } else {
+            let bestScore = Infinity;
+            board.forEach((row, i) => {
+                row.forEach((cell, j) => {
+                    if (cell === null) {
+                        board[i][j] = 'O'; // Simulate opponent move
+                        const { score } = minimax(board, depth + 1, true, gameID);
+                        board[i][j] = null; // Undo move
+                        if (score < bestScore) {
+                            bestScore = score;
+                            bestMove = { i, j };
+                        }
+                    }
+                });
+            });
+            return { score: bestScore, move: bestMove };
+        }
+    };
+
+    const findBestMove = (gameID) => {
+        const currentBoard = state.miniGames[gameID];
+    
+        if (!currentBoard || !Array.isArray(currentBoard)) {
+            console.error("Invalid board state for gameID:", gameID);
+            return;
+        }
+    
+        const { move } = minimax(currentBoard, 0, true, gameID);
+        if (move) {
+            moveUpdate(gameID, move.i * 3 + move.j);
+        }
+    };
+    
+    
+    
+    
+    
 
     return <StateContext.Provider 
     value = {{ newGame,

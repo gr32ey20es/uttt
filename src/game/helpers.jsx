@@ -1,4 +1,5 @@
 const whoIsWinner = (game) => {
+    if (!game || !Array.isArray(game)) return null;
     let winner = null;
 
     for(let i = 0; i < 3; i++) {
