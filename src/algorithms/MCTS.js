@@ -1,16 +1,14 @@
 import { Helpers } from "./helpers.js";
 
-class Node {
-    constructor () {
+class Node 
+{
+    constructor (prevAction) {
+        this.prevAction = prevAction;
+        this.isTerminal = false;
         this.childNodes = [];
         this.numVisits = 0;
         this.numWinsX = 0;
         this.numWinsO = 0;
-    }
-
-    expand() {
-        if (!(childNodes.length == 0)) 
-            return; // notLeaf
     }
 }
 class MCTS 
@@ -19,22 +17,84 @@ class MCTS
         turn,
         board,      // 1*81
         numSimulations,
-        explorationStrength
+        explorationStrength,
+        prevAction,
     ) {
         this.turn = turn;
         this.board = board;
         this.numSimulations = numSimulations;
         this.explorationStrength = explorationStrength;
+        this.prevAction = prevAction;
+        this.root = new Node(prevAction);
 
         // temporary
-        this.tempBoard = new Array(90).fill(null);  // 9mini + 1super
+        this.tempBoard = new Array(81 + 9 + 1).fill(null);  // 9mini + 1super + result
         this.legalActions = [];
+        this.selectedPath = [];
+        this.topScoreIndices = [];
     }
 
-    simulation () {
-        this.tempBoard = [...this.board];        
-        let playerTurn = this.turn;
-        let prevAction = null;
+    UCT(node, parentNumVisits, turn) {
+        if (node.numVisits == 0) return 1e9;
+
+        let exploitationScore = turn === 'X' ? 
+            (node.numWinsX - node.numWinsO) / node.numVisits: 
+            (node.numWinsO - node.numWinsX) / node.numVisits;
+
+        let explorationScore = this.explorationStrength *
+            Math.sqrt(Math.log((parentNumVisits)) / node.numVisits);
+        return exploitationScore + explorationScore;
+    }
+    
+    selection (playerTurn) {
+        let node = this.root;
+        this.selectedPath = [];
+
+        let score, topScore;
+
+        while (node.numVisits > 0 && !node.isTerminal) {
+            if (node.numVisits == 1)
+                this.expansion(node);  
+            
+            this.selectedPath.push(node);
+            topScore = -1e9;
+
+            for (let i = 0; i < node.childNodes.length; ++i) {
+                score = this.UCT(node.childNodes[i], node.numVisits, playerTurn);
+                if (score > topScore) {
+                    this.topScoreIndices = [i];
+                    topScore = score;
+                } else if (score == topScore)
+                    this.topScoreIndices.push(i);
+            }
+
+            node = node.childNodes[
+                this.topScoreIndices[
+                    Math.floor(Math.random() * this.topScoreIndices.length)
+                ]
+            ];
+
+            playerTurn = playerTurn === 'X' ? 'O' : 'X';
+        }
+        this.selectedPath.push(node);
+
+        return playerTurn;
+    }
+
+    expansion (node) {
+        if (node.childNodes.length > 0) {
+            console.log("Something Wrong!!!");
+            return;
+        }        
+        this.legalActions = [];
+        Helpers.getLegalActions(this.tempBoard, this.legalActions, node.prevAction);
+
+        for (let i = 0; i < this.legalActions.length; ++i)
+            node.childNodes.push(new Node(this.legalActions[i]));
+    }
+
+    simulation (playerTurn) {
+        let prevAction = this.selectedPath[this.selectedPath.length-1].prevAction;
         
         while(Helpers.whoIsWinnerSuper(this.tempBoard, prevAction) === null) {
             Helpers.getLegalActions(this.tempBoard, this.legalActions, prevAction);
@@ -46,31 +106,28 @@ class MCTS
             this.legalActions = [];
         }
 
-        data[Helpers.whoIsWinnerSuper(this.tempBoard, prevAction)] ++;
+        // backpropagation
+        let result = Helpers.whoIsWinnerSuper(this.tempBoard, prevAction);
+        for (let i = 0; i < this.selectedPath.length; ++i) {
+            this.selectedPath[i].numVisits ++;
+            if (result === 'X') this.selectedPath[i].numWinsX ++;
+            else if (result === 'O') this.selectedPath[i].numWinsO ++;
+        }
+    }
+
+    run () {
+        let now = Date.now();
+        for (let i = 0; i < this.numSimulations; ++ i) 
+        {
+            this.tempBoard = [...this.board];
+            let playerTurn = this.selection(this.turn);
+            this.simulation(playerTurn);
+        }
+
+        console.log(this.root.childNodes);
+        console.log(Date.now() - now);
     }
 }
 
-const array = [
-    'O',  null, 'O',  'O',  null, 'X',  'X',  null, 'X',  null,
-    null, 'X',  'X',  'X',  null, 'X',  null, null, null, 'O',
-    'O',  null, 'X',  null, 'X',  'X',  'X',  'X',  'X',  'O',
-    'O',  'O',  'O',  'X',  'X',  null, null, null, 'O',  'O',
-    'O',  'O',  'X',  'O',  'X',  null, 'O',  null, 'X',  null,
-    null, 'X',  'X',  'X',  'O',  'O',  'X',  'X',  'X',  'O',
-    'O',  'O',  'O',  'X',  'O',  null, 'X',  'X',  'O',  'X',
-    'O',  null, null, 'O',  'O',  'O',  'X',  'O',  null, 'O',
-    'X',  null, 'X',  'X',  'O',  'O',  'X',  'O',  'X',  null
-]
-
-const mcts = new MCTS('X', new Array(90).fill(null), 0, 0);
-// const mcts = new MCTS('X', array, 0, 0);
-
-var data = {'X': 0, 'N': 0, 'O': 0};
-
-let now = Date.now();
-for (let i = 0; i < 100000; ++ i) 
-{
-    mcts.simulation();
-}
-console.log(data);
-console.log(Date.now() - now);
+const mcts = new MCTS('X', new Array(91).fill(null), 100000, Math.sqrt(2), null);
+mcts.run();

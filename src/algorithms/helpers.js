@@ -39,7 +39,9 @@ class Helpers {
             for (let boardID = 0; boardID < 9; ++boardID) 
                 board[81 + boardID] = this.whoIsWinner(board, boardID * 9);
 
-        return this.whoIsWinner(board, 81);
+        let result = this.whoIsWinner(board, 81);
+        board[90] = result;
+        return result;
     }
 
     static getLegalActions(board, legalActions, prevAction = null) 
@@ -64,20 +66,6 @@ class Helpers {
                     if (board[boardIDx9 + i] === null)
                         legalActions.push(boardIDx9 + i);
             }
-        }
-    }
-
-    static print(board) {
-        for (let boardID = 0; boardID < 9; ++boardID) {
-            let boardIDx9 = 9 * boardID;
-            let str = "";
-
-            for (let i = 0; i < 9; ++i)
-                str = str + board[boardIDx9 + i] + " ";
-
-            str = str + board[81 + boardID];
-
-            console.log(str);
         }
     }
 }
