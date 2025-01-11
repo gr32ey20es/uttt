@@ -4,7 +4,6 @@ class Node
 {
     constructor (prevAction) {
         this.prevAction = prevAction;
-        this.isTerminal = false;
         this.childNodes = [];
         this.numVisits = 0;
         this.numWinsX = 0;
@@ -52,7 +51,7 @@ class MCTS
 
         let score, topScore;
 
-        while (node.numVisits > 0 && !node.isTerminal) {
+        while (node.numVisits > 0) {
             if (node.numVisits == 1)
                 this.expansion(node);  
             
@@ -115,6 +114,38 @@ class MCTS
         }
     }
 
+    selectAction() {
+        let node = this.root;
+        let score, topScore;
+
+        topScore = -1e9;
+
+        for (let i = 0; i < node.childNodes.length; ++i) {
+            let childNode = node.childNodes[i];
+
+            score = this.turn === 'X' ? 
+                (childNode.numWinsX - childNode.numWinsO) * Math.log(Math.log(childNode.numVisits)):
+                (childNode.numWinsO - childNode.numWinsX) * Math.log(Math.log(childNode.numVisits));
+            
+            console.log('%d, %d, %d, %d, %d', node.childNodes[i].prevAction, 
+                score, node.childNodes[i].numWinsX, node.childNodes[i].numWinsO, node.childNodes[i].numVisits);
+
+            if (score > topScore) {
+                this.topScoreIndices = [i];
+                topScore = score;
+            } else if (score == topScore)
+                this.topScoreIndices.push(i);
+        }
+
+        node = node.childNodes[
+            this.topScoreIndices[
+                Math.floor(Math.random() * this.topScoreIndices.length)
+            ]
+        ];
+
+        return node.prevAction;
+    }
+
     run () {
         let now = Date.now();
         for (let i = 0; i < this.numSimulations; ++ i) 
@@ -124,10 +155,25 @@ class MCTS
             this.simulation(playerTurn);
         }
 
-        console.log(this.root.childNodes);
+        console.log(this.selectAction());
+
+        // console.log(this.root.childNodes);
         console.log(Date.now() - now);
     }
 }
 
+const arr = [
+    null, 'O',  'O', null, 'O',  'X',  null, 'O',  'O',  'O',
+    null, 'X',  'O', 'O',  null, null, 'O',  'O',  'X',  'X',
+    'O',  null, 'X', null, 'X',  'X',  'O',  'O',  null, 'O',
+    'X',  'O',  'O', 'O',  'X',  'X',  'X',  'X',  null, 'X',
+    null, 'X',  'X', 'O',  null, 'X',  'X',  'O',  null, 'O',
+    'O',  'X',  'O', 'O',  null, null, 'X',  'O',  'O',  'X',
+    'O',  'X',  'O', 'X',  'X',  null, 'X',  'O',  'X',  'X',
+    'O',  'X',  'X', 'X',  null, 'X',  'X',  'X',  null, 'O',
+    'O',  'O',  'O', 'X',  'O',  'X',  'O',  null, 'X',  'X',
+    null
+];
+// const mcts = new MCTS('X', arr, 1000, Math.sqrt(2), 59);
 const mcts = new MCTS('X', new Array(91).fill(null), 100000, Math.sqrt(2), null);
 mcts.run();
