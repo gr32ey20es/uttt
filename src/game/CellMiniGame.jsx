@@ -18,10 +18,35 @@ const CellMiniGame = ({ gameID, index }) => {
             setMutex(true);
             setSelfAni({ ...selfAni, event: 'PathHidden' });
             undoUpdate();
-        }; 
+        };
     }, [state]);
 
+
+    const aiMove = () => {
+        const mcts = new MCTS('O', state.miniGames.flat(), 100000, Math.sqrt(2), null);
+        mcts.run();
+    
+        const bestMove = mcts.root.childNodes.reduce((best, node) => {
+            return node.numVisits > best.numVisits ? node : best;
+        });
+    
+        const { prevAction } = bestMove;
+        const gameID = Math.floor(prevAction / 9);
+        const index = prevAction % 9;
+    
+        moveUpdate(gameID, index);
+    };
+    
+    
+
     const onClick = () => {
+        if(state.isAI && state.playerTurn === 'O') return;
+        if (state.isAI && state.playerTurn === 'X') {
+            setTimeout(() => {
+                aiMove();
+            }, 500);
+        }
+
         setMutex(true);
         setSelfAni({ ...selfAni, type: state.playerTurn, event: 'PathVisible' });
         moveUpdate(gameID, index);

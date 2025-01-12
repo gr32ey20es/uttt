@@ -73,7 +73,7 @@ const StateProvider = ({children}) => {
     value = {{ newGame,
         mutex, setMutex, state, setState, setHasUndone, 
         isAlternateCellMG, isAlternateMG, isClickable, 
-        moveUpdate, undoUpdate 
+        moveUpdate, undoUpdate,
     }}
     > {children} </StateContext.Provider>;
 };

@@ -131,3 +131,5 @@ class MCTS
 
 const mcts = new MCTS('X', new Array(91).fill(null), 100000, Math.sqrt(2), null);
 mcts.run();
+
+export default MCTS;
