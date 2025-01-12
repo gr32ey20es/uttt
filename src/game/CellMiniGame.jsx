@@ -1,16 +1,22 @@
 import './CellMiniGame.css';
 import useStateContext from "./StateContext";
-import { useEffect, useState } from 'react';
-import MCTS from '../algorithms/MCTS';
+import { useEffect, useRef, useState } from 'react';
 
 const CellMiniGame = ({ gameID, index }) => {
-    const { state, setMutex, isClickable, isAlternateCellMG, moveUpdate, undoUpdate} = useStateContext();
+    const { 
+        state, setMutex, isClickable, isAlternateCellMG, 
+        moveUpdate, undoUpdate, AIMove, isAIMove, setIsAIMove
+    } = useStateContext();
+
+    const [ isAIClick, setIsAIClick ] = useState(false);
+
     const [ selfAni, setSelfAni ] = useState({
         type: null,
         event: null,
         onAnimationEnd: () => setMutex(false)
     });
 
+    const buttonRef = useRef(null);
     let clickable = isClickable(gameID, index);
     let alternate = isAlternateCellMG(gameID, index);
 
@@ -19,44 +25,44 @@ const CellMiniGame = ({ gameID, index }) => {
             setMutex(true);
             setSelfAni({ ...selfAni, event: 'PathHidden' });
             undoUpdate();
-        };
+        }; 
     }, [state]);
 
+    useEffect(() => {
+        if(AIMove !== null && Math.floor(AIMove / 9) === gameID && AIMove % 9 === index)
+            {
+                setIsAIClick(true);
+                setTimeout(()=>buttonRef.current.click()
+                , 1000);   // Change it!!!
+                setTimeout(()=>{      
+                    setIsAIClick(false);        
+                    setIsAIMove(false);
+                }, 1100);   // Change it!!!
+            }
+    }, [AIMove, isAIClick])
 
-    const aiMove = () => {
-        const mcts = new MCTS('O', state.miniGames.flat(), 100000, Math.sqrt(2), null);
-        mcts.run();
-    
-        const bestMove = mcts.root.childNodes.reduce((best, node) => {
-            return node.numVisits > best.numVisits ? node : best;
-        });
-    
-        const { prevAction } = bestMove;
-        const gameID = Math.floor(prevAction / 9);
-        const index = prevAction % 9;
-    
-        moveUpdate(gameID, index);
-    };
-    
-    
-
-    const onClick = () => {
-        if(state.isAI && state.playerTurn === 'O') return;
-        if (state.isAI && state.playerTurn === 'X') {
-            setTimeout(() => {
-                aiMove();
-            }, 500);
-        }
+    const onClickAI = () => {
+        console.log(1);
 
         setMutex(true);
         setSelfAni({ ...selfAni, type: state.playerTurn, event: 'PathVisible' });
         moveUpdate(gameID, index);
     }
 
+    const onClickHuman = async () => {
+        console.log(2);
+
+        setMutex(true);
+        setSelfAni({ ...selfAni, type: state.playerTurn, event: 'PathVisible' });
+        moveUpdate(gameID, index);
+        setIsAIMove(isAIMove === null ? null : true);
+    }
+
     return <>
     <div 
         className={'CellMiniGame' + (clickable ? ' hover' : '')}
-        onClick={clickable ? onClick : null}
+        onClick={clickable ? (isAIClick ? onClickAI : onClickHuman) : null}
+        ref={buttonRef}
         style={{
             '--hover-color': state.playerTurn === 'X' ? '#bbdefb' : '#f8bbd0',
             '--background-color': clickable ? (state.playerTurn === 'X' ? '#e3f2fd' : '#fce4ec') : '#fff'

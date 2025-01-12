@@ -26,5 +26,5 @@
 
 .BrushBackground > div { opacity: 0; transition: 0.45s; transition-delay: 0.45s }
 .XBrushBackground { background-image: url('../assets/XBrushBackground.svg') }
-.OBrushBackground { background-image: url('../assets/XBrushBackground.svg') }
-.NBrushBackground { background-image: url('../assets/XBrushBackground.svg') }
+.OBrushBackground { background-image: url('../assets/OBrushBackground.svg') }
+.NBrushBackground { background-image: url('../assets/NBrushBackground.svg') }

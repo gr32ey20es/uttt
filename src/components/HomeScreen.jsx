@@ -7,6 +7,8 @@ import Winner from '../assets/Winner.svg';
 import XWinner from '../assets/XWinner.svg';
 import OWinner from '../assets/OWinner.svg';
 import NWinner from '../assets/NWinner.svg';
+import TicTacToe from '../assets/Tic-Tac-Toe.svg';
+import Ultimate from '../assets/Ultimate.svg';
 
 const HomeScreen = () => {
     const gameIcon = require('../assets/GameIcon.png');
@@ -24,11 +26,9 @@ const HomeScreen = () => {
     };
 
     const { overlay, setOverlay, gameDone, setGameDone } = useHomeScreenContext();
-    const { newGame, state, setState } = useStateContext();
+    const { newGame, state, setState, isAIMove, setIsAIMove } = useStateContext();
     useEffect(()=>{if(state !== null && state.winner !== null) { setOverlay(true); setGameDone(true) }}, [state]);
     useEffect(()=>{}, [overlay]);
-
-    console.log(state)
 
     return <>
     <AnimatePresence>
@@ -38,23 +38,26 @@ const HomeScreen = () => {
             variants={variants} initial={"closed"} 
             animate={"open"} exit={"closed"}
         >
-            <motion.div className="modal" style={{display: "flex", flexDirection: "column", justifyContent: 'space-between'}}
+            <motion.div className="modal" style={{display: "flex", flexDirection: "column"}}
                 variants={modalVariants} onClick={(e) => e.stopPropagation()}>
-                <motion.div></motion.div>        
+                <motion.div style={{display: "flex", flexDirection: "column", justifyContent: 'center', marginTop: -20}} >
+                    <motion.img src={Ultimate}/>
+                    <motion.img src={TicTacToe} style={{marginTop: -50}}/>
+                </motion.div> 
+                
                 <motion.div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+                    <motion.div className="checkbox-wrapper-10" style={{marginBottom: 5}}>
+                        <motion.input className="tgl tgl-flip" id="cb5" type="checkbox" 
+                            onClick={() => setIsAIMove(isAIMove === null ? false : null)}/>
+                        <motion.label className="tgl-btn" data-tg-off="PvC" data-tg-on="PvP" for="cb5"/>
+                    </motion.div>
+
                     <motion.button 
                         className="button-82-pushable" role="button" 
-                        onClick={() => { newGame(false); setOverlay(false)}}> 
+                        onClick={() => { newGame(); setOverlay(false)}}> 
                         <motion.span className="button-82-shadow"></motion.span>
                         <motion.span className="button-82-edge"></motion.span>
-                        <motion.span className="button-82-front text"> PvP </motion.span>
-                    </motion.button>
-                    <motion.button 
-                        className="button-82-pushable" role="button" 
-                        onClick={() => { newGame(true); setOverlay(false)}}> 
-                        <motion.span className="button-82-shadow"></motion.span>
-                        <motion.span className="button-82-edge"></motion.span>
-                        <motion.span className="button-82-front text"> PvC </motion.span>
+                        <motion.span className="button-82-front text"> New Game </motion.span>
                     </motion.button>
                     <motion.img style={{width: '60%'}} src={gameIcon}/>
                 </motion.div>

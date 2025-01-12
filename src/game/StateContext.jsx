@@ -1,5 +1,6 @@
-import { useState, createContext, useContext } from "react";
+import { useState, createContext, useContext, useEffect } from "react";
 import { whoIsWinner } from "./helpers";
+import { MCTS } from "../algorithms/MCTS.js";
 
 const StateContext = createContext();
 const useStateContext = () => useContext(StateContext);
@@ -7,8 +8,10 @@ const useStateContext = () => useContext(StateContext);
 const StateProvider = ({children}) => {
     const [mutex, setMutex] = useState(false) // For Animation
     const [state, setState] = useState(null)
+    const [AIMove, setAIMove] = useState(null)
+    const [isAIMove, setIsAIMove] = useState(false)
 
-    const newGame = (isAI = false) => setState({
+    const newGame = () => setState({
         winner: null,
         playerTurn: 'X',
         gameIDTurn: null,
@@ -16,7 +19,6 @@ const StateProvider = ({children}) => {
         miniGames : Array(9).fill().map(() => Array(9).fill(null)),
         prevMoves : [],
         hasUndone : null,
-        isAI,
     })
 
     const setHasUndone = () => setState({...state, hasUndone: true})
@@ -56,6 +58,28 @@ const StateProvider = ({children}) => {
         setState(newState);
     }
 
+    const stateToBoard = (state) => {
+        let board = [];
+        for (let gameID = 0; gameID < 9; gameID ++)
+            board.push(...state.miniGames[gameID]);
+        board.push(...state.superGame);
+        board.push(state.winner);
+
+        return board;
+    }
+    const moveToAction = (move) => move[0] * 9 + move[1];
+
+    useEffect(()=>{
+        async function runner() {
+            if(isAIMove === true) {
+                let mcts = new MCTS(state.playerTurn, stateToBoard(state), 10000, Math.sqrt(2), 
+                state.prevMoves.length ? moveToAction(state.prevMoves[state.prevMoves.length-1]) : null);
+                setAIMove( await mcts.run() );
+            }
+        }
+        runner();
+    }, [isAIMove])
+
     const undoUpdate = () => {
         let newState = {...state};
 
@@ -67,13 +91,14 @@ const StateProvider = ({children}) => {
         newState.hasUndone = newState.prevMoves.length ? false : null;
 
         setState(newState);
+        setAIMove(null);
     }
 
     return <StateContext.Provider 
-    value = {{ newGame,
+    value = {{ newGame, AIMove, setAIMove, isAIMove, setIsAIMove,
         mutex, setMutex, state, setState, setHasUndone, 
         isAlternateCellMG, isAlternateMG, isClickable, 
-        moveUpdate, undoUpdate,
+        moveUpdate, undoUpdate 
     }}
     > {children} </StateContext.Provider>;
 };
