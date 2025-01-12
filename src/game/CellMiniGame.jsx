@@ -1,6 +1,7 @@
 import './CellMiniGame.css';
 import useStateContext from "./StateContext";
 import { useEffect, useState } from 'react';
+import MCTS from '../algorithms/MCTS';
 
 const CellMiniGame = ({ gameID, index }) => {
     const { state, setMutex, isClickable, isAlternateCellMG, moveUpdate, undoUpdate} = useStateContext();
