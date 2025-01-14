@@ -32,12 +32,15 @@ const CellMiniGame = ({ gameID, index }) => {
         if(AIMove !== null && Math.floor(AIMove / 9) === gameID && AIMove % 9 === index)
             {
                 setIsAIClick(true);
-                setTimeout(()=>buttonRef.current.click()
-                , 1000);   // Change it!!!
+                setTimeout(() => {
+                    try {buttonRef.current.click()}
+                    catch {}
+                }
+                , 500);   // Change it!!!
                 setTimeout(()=>{      
                     setIsAIClick(false);        
                     setIsAIMove(false);
-                }, 1100);   // Change it!!!
+                }, 600);   // Change it!!!
             }
     }, [AIMove, isAIClick])
 

@@ -72,7 +72,7 @@ const StateProvider = ({children}) => {
     useEffect(()=>{
         async function runner() {
             if(isAIMove === true) {
-                let mcts = new MCTS(state.playerTurn, stateToBoard(state), 10000, Math.sqrt(2), 
+                let mcts = new MCTS(state.playerTurn, stateToBoard(state), 100000, Math.sqrt(2), 
                 state.prevMoves.length ? moveToAction(state.prevMoves[state.prevMoves.length-1]) : null);
                 setAIMove( await mcts.run() );
             }
